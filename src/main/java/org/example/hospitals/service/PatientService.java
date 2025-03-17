@@ -3,6 +3,9 @@ package org.example.hospitals.service;
 import org.example.hospitals.entities.Patient;
 import org.example.hospitals.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +22,10 @@ public class PatientService {
         return patientRepository.findById(id).orElse(null);
     }
 
-    public List<Patient> getAll(){
-        return patientRepository.findAll();
+
+    public Page<Patient> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return patientRepository.findAll(pageable);
     }
+
 }
