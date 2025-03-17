@@ -28,4 +28,9 @@ public class PatientService {
         return patientRepository.findAll(pageable);
     }
 
+    public Page<Patient> getByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return patientRepository.findByNomContains(name, pageable);
+    }
+
 }

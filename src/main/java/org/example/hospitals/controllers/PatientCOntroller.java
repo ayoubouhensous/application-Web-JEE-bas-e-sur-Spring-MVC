@@ -20,10 +20,13 @@ public class PatientCOntroller {
     private PatientService patientService;
 
     @GetMapping("index")
-    public String index(Model model, @RequestParam(name = "page" ,defaultValue = "0") int page,@RequestParam(name = "size",defaultValue = "4") int size){
-        Page<Patient> patientsList = patientService.getAll(page, size);
+    public String index(Model model, @RequestParam(name = "page" ,defaultValue = "0") int page,
+                        @RequestParam(name = "size",defaultValue = "4") int size,
+                        @RequestParam(name = "keyword" ,defaultValue = "") String kw){
+        Page<Patient> patientsList = patientService.getByName(kw,page, size);
         model.addAttribute("patientsList", patientsList.getContent());
         model.addAttribute("pages", new int[patientsList.getTotalPages()]);
+        model.addAttribute("pagecount",page);
         return "patients";
     }
 }
