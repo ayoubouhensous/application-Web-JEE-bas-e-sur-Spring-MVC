@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,6 +28,14 @@ public class PatientCOntroller {
         model.addAttribute("patientsList", patientsList.getContent());
         model.addAttribute("pages", new int[patientsList.getTotalPages()]);
         model.addAttribute("pagecount",page);
+        model.addAttribute("keyword",kw);
         return "patients";
+    }
+
+    @GetMapping("delet")
+    public String delete(@RequestParam(name = "id") Long id){
+        patientService.delete(id);
+        return "redirect:/index";
+
     }
 }

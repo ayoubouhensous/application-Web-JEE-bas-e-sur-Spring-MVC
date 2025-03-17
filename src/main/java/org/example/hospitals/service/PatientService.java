@@ -21,6 +21,10 @@ public class PatientService {
     public Patient getById(Long id){
         return patientRepository.findById(id).orElse(null);
     }
+    public Patient delete(Long id){
+        patientRepository.deleteById(id);
+        return patientRepository.findById(id).orElse(null);
+    }
 
 
     public Page<Patient> getAll(int page, int size) {
