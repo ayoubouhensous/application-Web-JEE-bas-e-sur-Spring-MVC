@@ -33,9 +33,9 @@ public class PatientCOntroller {
     }
 
     @GetMapping("delet")
-    public String delete(@RequestParam(name = "id") Long id){
+    public String delete(@RequestParam(name = "id") Long id,String keyword,int page){
         patientService.delete(id);
-        return "redirect:/index";
+        return "redirect:/index?page="+page+"&keyword="+keyword;
 
     }
 }
