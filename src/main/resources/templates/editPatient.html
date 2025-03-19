@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="template">
 <head>
     <meta charset="UTF-8">
     <title>Edit Patient</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.2/css/bootstrap.min.css"/>
 </head>
 <body>
+<div layout:fragment="content">
 <div class="container mt-5">
     <h2>Edit Patient</h2>
     <form th:action="@{/updatePatient}" th:object="${patient}" method="post">
@@ -34,12 +35,12 @@
         <div class="mb-3">
             <label class="form-label">Score:</label>
             <input type="number" class="form-control" th:field="*{score}" required>
-            <small class="text-danger" th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></small>
+                <small class="text-danger" th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></small>
         </div>
 
         <button type="submit" class="btn btn-primary">Update</button>
         <a th:href="@{/index}" class="btn btn-secondary">Cancel</a>
     </form>
-</div>
+</div></div>
 </body>
 </html>

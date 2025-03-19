@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="template">
 <head>
     <meta charset="UTF-8">
     <title>Add Patient</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.2/css/bootstrap.min.css"/>
 </head>
 <body>
+<div layout:fragment="content">
 <div class="container mt-5">
     <h2>Add New Patient</h2>
     <form th:action="@{/savePatient}" th:object="${patient}" method="post">
         <div class="mb-3">
             <label class="form-label">Name:</label>
             <input type="text" class="form-control" th:field="*{nom}" required>
+            <small class="text-danger" th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></small>
+
         </div>
         <div class="mb-3">
             <label class="form-label">Date of Birth:</label>
             <input type="date" class="form-control" th:field="*{dateNaissance}" required>
+            <small class="text-danger" th:if="${#fields.hasErrors('dateNaissance')}" th:errors="*{dateNaissance}"></small>
+
         </div>
         <div class="mb-3">
             <label class="form-label">Malade:</label>
@@ -27,10 +32,12 @@
         <div class="mb-3">
             <label class="form-label">Score:</label>
             <input type="number" class="form-control" th:field="*{score}"required>
+            <small class="text-danger" th:if="${#fields.hasErrors('score')}" th:errors="*{score}"></small>
+
         </div>
         <button type="submit" class="btn btn-success">Save</button>
         <a th:href="@{/index}" class="btn btn-secondary">Cancel</a>
     </form>
-</div>
+</div></div>
 </body>
 </html>

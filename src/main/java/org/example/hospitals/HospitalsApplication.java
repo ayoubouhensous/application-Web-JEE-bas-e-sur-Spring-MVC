@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @SpringBootApplication
-public class HospitalsApplication implements CommandLineRunner {
+public class HospitalsApplication {
 
     @Autowired
     PatientRepository patientRepository;
@@ -21,12 +21,5 @@ public class HospitalsApplication implements CommandLineRunner {
     }
 
 
-    @Override
-    public void run(String... args) throws Exception {
-        patientRepository.save(new Patient(null, "John", new Date(),true,25));
-        patientRepository.save(new Patient(null, "John", java.sql.Date.valueOf(LocalDate.of(2024, 12, 11)), true, 25));
-
-
-    }
 
 }

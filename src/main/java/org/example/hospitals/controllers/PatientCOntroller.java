@@ -1,5 +1,6 @@
 package org.example.hospitals.controllers;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.hospitals.entities.Patient;
 import org.example.hospitals.repository.PatientRepository;
@@ -18,6 +19,10 @@ public class PatientCOntroller {
 
     @Autowired
     private PatientService patientService;
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/index"; // Redirection vers /index pour afficher les patients
+    }
 
     @GetMapping("index")
     public String index(Model model, @RequestParam(name = "page" ,defaultValue = "0") int page,
@@ -43,7 +48,10 @@ public class PatientCOntroller {
         return "addPatient";
     }
     @PostMapping("/savePatient")
-    public String savePatient(Patient patient) {
+    public String savePatient(@Valid  Patient patient,BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "addPatient";
+        }
         patientService.save(patient);
         return "redirect:/index";
     }
@@ -58,7 +66,7 @@ public class PatientCOntroller {
     }
 
     @PostMapping("/updatePatient")
-    public String updatePatient(  Patient patient, BindingResult bindingResult) {
+    public String updatePatient( @Valid Patient patient, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "editPatient";
         }
