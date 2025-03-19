@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,5 +36,33 @@ public class PatientCOntroller {
         patientService.delete(id);
         return "redirect:/index?page="+page+"&keyword="+keyword;
 
+    }
+    @GetMapping("/addPatient")
+    public String showAddPatientForm(Model model) {
+        model.addAttribute("patient", new Patient());
+        return "addPatient";
+    }
+    @PostMapping("/savePatient")
+    public String savePatient(Patient patient) {
+        patientService.save(patient);
+        return "redirect:/index";
+    }
+    @GetMapping("/editPatient/{id}")
+    public String showEditPatientForm(@PathVariable Long id, Model model) {
+        Patient patient = patientService.getById(id);
+        if (patient == null) {
+            return "redirect:/index";
+        }
+        model.addAttribute("patient", patient);
+        return "editPatient";
+    }
+
+    @PostMapping("/updatePatient")
+    public String updatePatient(  Patient patient, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "editPatient";
+        }
+        patientService.save(patient);
+        return "redirect:/index";
     }
 }
