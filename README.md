@@ -12,13 +12,13 @@ Cette application Web JEE permet de gérer les patients à l'aide du framework S
 - **Bootstrap** - Pour le design et le style des pages
 - **MySQL** - Pour le stockage des données en production  
 
-
 ## Fonctionnalités
 - **Afficher la liste des patients** avec pagination et recherche par nom
 - **Ajouter un patient**
+- **Modifier un patient**
 - **Supprimer un patient**
-- **Modifier un patient** (non inclus dans le code actuel, mais facile à ajouter)
 - **Navigation entre les pages** grâce à la pagination
+- **Utilisation de templates Thymeleaf avec des fragments** pour un meilleur réemploi du code
 
 ## Structure du projet
 
@@ -37,102 +37,87 @@ Ce contrôleur gère les requêtes liées aux patients.
         return "patients";
     }
   ```
-- `@GetMapping("delet")` : Supprime un patient et redirige vers la liste des patients
-- ```java
-  public String delete(@RequestParam(name = "id") Long id,String keyword,int page){
-        patientService.delete(id);
-        return "redirect:/index?page="+page+"&keyword="+keyword;
-
-    }
-  ```
+- `@GetMapping("add")` : Affiche le formulaire d'ajout d'un patient
+- `@PostMapping("save")` : Enregistre un nouveau patient dans la base de données
+- `@GetMapping("edit")` : Charge les détails d'un patient pour modification
+- `@PostMapping("update")` : Met à jour les informations d'un patient existant
+- `@GetMapping("delete")` : Supprime un patient et redirige vers la liste des patients
 
 ### 2. `PatientService`
 Service métier qui interagit avec le `PatientRepository`.
 - `save(Patient patient)` : Enregistre un nouveau patient
-  ```java
-public  void save(Patient patient){
-        patientRepository.save(patient);
-    }
-  ```
 - `getById(Long id)` : Recherche un patient par ID
-  ```java
-public Patient getById(Long id){
-        return patientRepository.findById(id).orElse(null);
-    }
-  ```
 - `delete(Long id)` : Supprime un patient par ID
-   ```java
-public Patient delete(Long id){
-        patientRepository.deleteById(id);
-        return patientRepository.findById(id).orElse(null);
-    }
-
-  ```
 - `getAll(int page, int size)` : Récupère une liste paginée de tous les patients
-   ```java
-ublic Page<Patient> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return patientRepository.findAll(pageable);
-    }
-  ```
 - `getByName(String name, int page, int size)` : Recherche un patient par nom
-   ```java
-    public Page<Patient> getByName(String name, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return patientRepository.findByNomContains(name, pageable);
-    }
-
-  ```
 
 ### 3. `PatientRepository`
 Interface d'accès aux données utilisant **Spring Data JPA**.
 - `findByNomContains(String nom, Pageable pageable)` : Recherche des patients par nom avec pagination
 
-### 4. Page HTML `patients.html`
-Utilise **Thymeleaf** pour afficher dynamiquement la liste des patients.
-- Formulaire de recherche
-  ```java
-    <form th:action="@{/index}" method="get">
-                    <div>Keyword</div>
-                    <input type="text" name="keyword" th:value="${keyword}"/>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-search"></i>
-                    </button>
+### 4. Templates Thymeleaf avec Fragments
+L'application utilise des fragments pour une meilleure organisation des templates :
+- `layout.html` : Template principal contenant l'entête, le menu et le pied de page.
+- `patients.html` : Affichage de la liste des patients.
+- `add-patient.html` : Formulaire d'ajout d'un patient.
+- `edit-patient.html` : Formulaire de modification d'un patient.
+- `fragments/navbar.html` : Barre de navigation commune à toutes les pages.
 
-                </form>
-  ```
-- Tableau affichant les patients
-  ```java
-  <tbody>
-                    <tr th:each="p : ${patientsList}">
-                        <td th:text="${p.id}"></td>
-                        <td th:text="${p.nom}"></td>
-                        <td th:text="${p.dateNaissance}"></td>
-                        <td th:text="${p.malade}"></td>
-                        <td th:text="${p.score}"></td>
-                        <td>
-                            <a onclick=" return confirm('Etes vous sure?')" th:href="@{delet(id=${p.id},keyword=${keyword},page=${pagecount})}" class="btn btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    </tbody>
-  ```
-- Bouton pour supprimer un patient avec confirmation
-  ```java
-  <td>
-                            <a onclick=" return confirm('Etes vous sure?')" th:href="@{delet(id=${p.id},keyword=${keyword},page=${pagecount})}" class="btn btn-danger">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-  ```
-- Système de pagination
-  ```java
-  <ul class="nav nav-pills">
-                    <li th:each="value,item : ${pages}">
-                     <a th:class="${pagecount == item.index?'btn btn-danger ms-2' : 'btn btn-outline-danger ms-2 '}" th:href="@{index(page=${item.index},keyword=${keyword})}"  th:text="${item.index}"></a>
-                </ul>
-  ```
+### Exemple d'utilisation des fragments
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/5.3.2/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.css"/>
+
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" th:href="@{/index}">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Patients
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/addPatient}">Nouveau</a></li>
+            <li><a class="dropdown-item" th:href="@{/index}">chercher</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Username
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" th:href="@{/addPatient}">Lougout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+    <section layout:fragment="content"></section>
+     </div>
+      <script src="/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+```
 
 ## Installation et exécution
 1. **Cloner le projet**
@@ -142,8 +127,8 @@ Utilise **Thymeleaf** pour afficher dynamiquement la liste des patients.
    ```
 
 2. **Configurer la base de données**
-    `application.properties` pour utilisez MySQL
-   ```java
+    `application.properties` pour utiliser MySQL
+   ```properties
     spring.datasource.url=jdbc:mysql://localhost:3306/hopital?createDatabaseIfNotExists=true
     spring.datasource.username=root
     spring.datasource.password=
@@ -152,16 +137,14 @@ Utilise **Thymeleaf** pour afficher dynamiquement la liste des patients.
     spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
    ```
 
-4. **Lancer l'application**
+3. **Lancer l'application**
    ```bash
    mvn spring-boot:run
    ```
 
-5. **Accéder à l'application**
+4. **Accéder à l'application**
    - Ouvrir `http://localhost:8080/index` dans votre navigateur
 
-
 ---
-
-Ce fichier README fournit une bonne documentation pour ton projet et permet à n'importe quel développeur de comprendre et d'exécuter ton application facilement.
+Ce fichier README est maintenant à jour avec les fonctionnalités d'ajout et d'édition de patient ainsi que l'utilisation des templates Thymeleaf avec fragments.
 
