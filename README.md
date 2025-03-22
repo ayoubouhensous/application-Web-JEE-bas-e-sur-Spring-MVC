@@ -37,11 +37,53 @@ Ce contrôleur gère les requêtes liées aux patients.
         return "patients";
     }
   ```
-- `@GetMapping("add")` : Affiche le formulaire d'ajout d'un patient
-- `@PostMapping("save")` : Enregistre un nouveau patient dans la base de données
-- `@GetMapping("edit")` : Charge les détails d'un patient pour modification
+- `@GetMapping("/addPatient") : Affiche le formulaire d'ajout d'un patient
+  ```java
+    public String showAddPatientForm(Model model) {
+        model.addAttribute("patient", new Patient());
+        return "addPatient";
+    }
+  ```
+- `    @PostMapping("/savePatient")` : Enregistre un nouveau patient dans la base de données
+  ```java
+    public String savePatient(@Valid  Patient patient,BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "addPatient";
+        }
+        patientService.save(patient);
+        return "redirect:/index";
+  ```
+- `@GetMapping("/editPatient/{id}")` : Charge les détails d'un patient pour modification
+  ```java
+      public String showEditPatientForm(@PathVariable Long id, Model model) {
+              Patient patient = patientService.getById(id);
+              if (patient == null) {
+                  return "redirect:/index";
+              }
+              model.addAttribute("patient", patient);
+              return "editPatient";
+          }
+  ```
 - `@PostMapping("update")` : Met à jour les informations d'un patient existant
+  ```java
+    public String updatePatient( @Valid Patient patient, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "editPatient";
+        }
+        patientService.save(patient);
+        return "redirect:/index";
+    }
+
+  ```
 - `@GetMapping("delete")` : Supprime un patient et redirige vers la liste des patients
+  ```java
+  public String delete(@RequestParam(name = "id") Long id,String keyword,int page){
+        patientService.delete(id);
+        return "redirect:/index?page="+page+"&keyword="+keyword;
+
+    }
+
+  ```
 
 ### 2. `PatientService`
 Service métier qui interagit avec le `PatientRepository`.
