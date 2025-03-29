@@ -36,18 +36,18 @@ public class PatientCOntroller {
         return "patients";
     }
 
-    @GetMapping("delet")
+    @GetMapping("/admin/delet")
     public String delete(@RequestParam(name = "id") Long id,String keyword,int page){
         patientService.delete(id);
         return "redirect:/index?page="+page+"&keyword="+keyword;
 
     }
-    @GetMapping("/addPatient")
+    @GetMapping("/admin/addPatient")
     public String showAddPatientForm(Model model) {
         model.addAttribute("patient", new Patient());
         return "addPatient";
     }
-    @PostMapping("/savePatient")
+    @PostMapping("/admin/savePatient")
     public String savePatient(@Valid  Patient patient,BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "addPatient";
@@ -55,7 +55,7 @@ public class PatientCOntroller {
         patientService.save(patient);
         return "redirect:/index";
     }
-    @GetMapping("/editPatient/{id}")
+    @GetMapping("/admin/editPatient/{id}")
     public String showEditPatientForm(@PathVariable Long id, Model model) {
         Patient patient = patientService.getById(id);
         if (patient == null) {
@@ -65,7 +65,7 @@ public class PatientCOntroller {
         return "editPatient";
     }
 
-    @PostMapping("/updatePatient")
+    @PostMapping("/admin/updatePatient")
     public String updatePatient( @Valid Patient patient, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "editPatient";

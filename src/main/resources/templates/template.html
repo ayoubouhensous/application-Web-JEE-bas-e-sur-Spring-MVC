@@ -25,18 +25,22 @@
             Patients
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" th:href="@{/addPatient}">Nouveau</a></li>
+            <li><a class="dropdown-item" th:href="@{/addPatient}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Nouveau</a></li>
             <li><a class="dropdown-item" th:href="@{/index}">chercher</a></li>
           </ul>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Username
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${#authentication.name}">
+
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" th:href="@{/addPatient}">Lougout</a></li>
+            <li>
+              <form method="post" th:action="@{/logout}">
+                <button class="dropdown-item" type="submit" > logout</button>
+              </form>
+            </li>
           </ul>
         </li>
       </ul>

@@ -16,7 +16,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>List of Patients</span>
-                <a th:href="@{/addPatient}" class="btn btn-danger">
+                <a th:href="@{/admin/addPatient}" class="btn btn-danger" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" >
                     <i class="bi bi-person-plus"></i> Add Patient
                 </a>
             </div>
@@ -38,7 +38,7 @@
                         <th>Date</th>
                         <th>Malade</th>
                         <th>Score</th>
-                        <th>Actions</th>
+                        <th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -48,13 +48,13 @@
                         <td th:text="${p.dateNaissance}"></td>
                         <td th:text="${p.malade}"></td>
                         <td th:text="${p.score}"></td>
-                        <td>
+                        <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                             <a onclick="return confirm('Êtes-vous sûr ?')"
-                               th:href="@{/delete(id=${p.id},keyword=${keyword},page=${pagecount})}"
+                               th:href="@{/admin/delet(id=${p.id},keyword=${keyword},page=${pagecount})}"
                                class="btn btn-danger">
                                 <i class="bi bi-trash"></i>
                             </a>
-                            <a th:href="@{/editPatient/{id}(id=${p.id})}" class="btn btn-warning">
+                            <a th:href="@{/user/editPatient/{id}(id=${p.id})}" class="btn btn-warning">
                                 <i class="bi bi-pencil"></i>
                             </a>
                         </td>
